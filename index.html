@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelamiento del Crecimiento Poblacional de Madrid</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+        .tab-active {
+            border-bottom: 3px solid #1e40af;
+            color: #1e40af;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .chart-container {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        @media print {
+            .page-break {
+                page-break-before: avoid;
+            }
+            .no-break {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-blue-800 mb-1">Modelamiento del Crecimiento Poblacional de Madrid</h1>
+            <p class="text-gray-600">Pagina web · 2017 – 2025</p>
+        </header>
+
+        <!-- Sistema de pestañas -->
+        <div class="border-b border-gray-200 mb-6">
+            <ul class="flex flex-wrap -mb-px">
+                <li class="mr-2">
+                    <button class="tab-btn tab-active inline-block p-4" onclick="openTab(event, 'tab1')">
+                        <i class="fas fa-chart-line mr-2"></i> Informe 1 - Modelo exponencial
+                    </button>
+                </li>
+                <li class="mr-2">
+                    <button class="tab-btn inline-block p-4" onclick="openTab(event, 'tab2')">
+                        <i class="fas fa-chart-area mr-2"></i> Informe 2 - Modelo Logístico
+                    </button>
+                </li>
+                <li>
+                    <button class="tab-btn inline-block p-4" onclick="openTab(event, 'tab3')">
+                        <i class="fas fa-square-root-alt mr-2"></i> Informe 3 - Laplace
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Contenido de pestañas -->
+        <!-- Pestaña 1: Modelo exponencial -->
+        <div id="tab1" class="tab-content active">
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-info-circle text-blue-500 mr-2"></i> Resumen ejecutivo
+                </h2>
+                <p class="mb-4">
+                    El modelamiento del crecimiento poblacional de Madrid entre 2017 y 2021 se realizó empleando ecuaciones diferenciales exponenciales.
+                    Se recopilaron datos oficiales, se ajustó un modelo exponencial y se resolvieron ecuaciones bajo diferentes condiciones iniciales.
+                    El análisis de error cuadrático permitió seleccionar la constante óptima de crecimiento y proyectar la población hasta 2025, evidenciando
+                    la utilidad de las ecuaciones diferenciales en el análisis demográfico de corto plazo.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-tasks text-blue-500 mr-2"></i> Metodología
+                </h2>
+                <ol class="list-decimal pl-5 mb-4">
+                    <li>Recopilación de datos anuales (2017–2021).</li>
+                    <li>Ajuste de la curva exponencial mediante regresión.</li>
+                    <li>Formulación de la ecuación diferencial: \[\frac{dP}{dt} = rP\]</li>
+                    <li>Obtención de funciones solución y comparación de proyecciones.</li>
+                    <li>Selección de la constante óptima por menor error cuadrático.</li>
+                </ol>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-trophy text-blue-500 mr-2"></i> Resultados principales y conclusiones
+                </h2>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>Población estimada para 2025: <strong>3,350,444</strong> a <strong>3,358,640</strong> habitantes según los modelos.</li>
+                    <li>El modelo óptimo utiliza: \[P(t) = 3{,}240{,}000\,e^{0{.}00484\,(t-1)}\]</li>
+                    <li>Las ecuaciones diferenciales exponenciales resultaron útiles para describir tendencias de corto plazo.</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-square-root-alt text-blue-500 mr-2"></i> Ecuaciones clave y visualización
+                </h2>
+                <div class="mb-4">
+
+                    \[\frac{dP}{dt} = rP\]
+
+                    \[P(t) = P_0\,e^{rt}\]
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-calculator text-blue-500 mr-2"></i> Simulador de crecimiento exponencial
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div>
+                        <label for="exp-p0" class="block text-sm font-medium text-gray-700">Población inicial P₀</label>
+                        <input type="number" id="exp-p0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="3240000">
+                        <div id="error-exp-p0" class="error-message">Error: Solo se admiten datos hasta 150000000</div>
+                    </div>
+                    <div>
+                        <label for="exp-r" class="block text-sm font-medium text-gray-700">Tasa de crecimiento r (% anual)</label>
+                        <input type="number" id="exp-r" step="0.001" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="0.484">
+                        <div id="error-exp-r" class="error-message">Error: solo se aceptan valores menores a 120</div>
+                    </div>
+                    <div>
+                        <label for="exp-year" class="block text-sm font-medium text-gray-700">Año de proyección</label>
+                        <input type="number" id="exp-year" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="2025">
+                        <div id="error-exp-year" class="error-message">Error: el máximo es 2030</div>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="exp-calculate" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+                            Calcular proyección
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-blue-50 rounded-lg text-center">
+                    <span class="font-semibold text-lg">Proyección en el año <span id="exp-proj-year">2025</span>:</span>
+                    <span id="exp-result" class="text-xl font-bold text-blue-700 ml-2">3,367,913 hab.</span>
+                </div>
+
+                <div class="chart-container mt-6">
+                    <canvas id="expChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pestaña 2: Modelo logístico -->
+        <div id="tab2" class="tab-content">
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-info-circle text-blue-500 mr-2"></i> Resumen ejecutivo
+                </h2>
+                <p class="mb-4">
+                    En esta entrega se implementó la ecuación logística para modelar el crecimiento poblacional de Madrid, incorporando la capacidad de soporte (K).
+                    Se identificaron intervalos de estabilización poblacional (2020 y 2021), empleando dichos años como referencia para estimar K y resolviendo
+                    ecuaciones logísticas. El análisis mostró que elegir correctamente la capacidad de soporte es clave para proyecciones realistas.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-tasks text-blue-500 mr-2"></i> Metodología
+                </h2>
+                <ol class="list-decimal pl-5 mb-4">
+                    <li>Formulación de la ecuación logística: \[\frac{dP}{dt} = rP\,(1-\frac{P}{K})\]</li>
+                    <li>Selección de K a partir de datos históricos con mínima variación de población (2020, 2021).</li>
+                    <li>Ajuste de la tasa de crecimiento r para minimizar el error.</li>
+                    <li>Resolución y comparación de proyecciones para 2025.</li>
+                </ol>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-trophy text-blue-500 mr-2"></i> Hallazgos y conclusiones
+                </h2>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>Los valores estimados de K fueron <strong>3,272,000</strong> y <strong>3,288,000</strong> habitantes.</li>
+                    <li>Las estimaciones para 2025 mostraron errores relativos menores al 10%, pero quedaron por debajo de la población real proyectada.</li>
+                    <li>El modelo logístico es útil si K es representativo del entorno urbano y sus limitaciones.</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-square-root-alt text-blue-500 mr-2"></i> Ecuación y visualización logística
+                </h2>
+                <div class="mb-4">
+
+                    \[P(t) = \frac{K}{1 + A\,e^{-rt}}, \quad A = \frac{K - P_0}{P_0}\]
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-calculator text-blue-500 mr-2"></i> Simulador de crecimiento logístico
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                    <div>
+                        <label for="log-p0" class="block text-sm font-medium text-gray-700">Población inicial P₀</label>
+                        <input type="number" id="log-p0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="3240000">
+                        <div id="error-log-p0" class="error-message">Error: Solo se admiten datos hasta 150000000</div>
+                    </div>
+                    <div>
+                        <label for="log-r" class="block text-sm font-medium text-gray-700">Tasa de crecimiento r (% anual)</label>
+                        <input type="number" id="log-r" step="0.001" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="0.484">
+                        <div id="error-log-r" class="error-message">Error: solo se aceptan valores menores a 120</div>
+                    </div>
+                    <div>
+                        <label for="log-k" class="block text-sm font-medium text-gray-700">Capacidad de soporte K</label>
+                        <input type="number" id="log-k" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="3280000">
+                        <div id="error-log-k" class="error-message">Error: el límite es 50,000,000</div>
+                    </div>
+                    <div>
+                        <label for="log-year" class="block text-sm font-medium text-gray-700">Año de proyección</label>
+                        <input type="number" id="log-year" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="2025">
+                        <div id="error-log-year" class="error-message">Error: el máximo es 2030</div>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="log-calculate" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+                            Calcular proyección
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-blue-50 rounded-lg text-center">
+                    <span class="font-semibold text-lg">Proyección en el año <span id="log-proj-year">2025</span>:</span>
+                    <span id="log-result" class="text-xl font-bold text-blue-700 ml-2">3,279,118 hab.</span>
+                </div>
+
+                <div class="chart-container mt-6">
+                    <canvas id="logChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pestaña 3: Transformada de Laplace -->
+        <div id="tab3" class="tab-content">
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-info-circle text-blue-500 mr-2"></i> Resumen ejecutivo
+                </h2>
+                <p class="mb-4">
+                    En esta etapa, se aplicó la transformada de Laplace para resolver las ecuaciones diferenciales (exponencial y logística) del crecimiento
+                    poblacional de Madrid, validando la equivalencia de resultados frente al método de separación de variables. El modelo logístico demostró
+                    mayor verosimilitud para proyecciones urbanas a largo plazo, siempre dependiendo de una estimación robusta de la capacidad de soporte.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-tasks text-blue-500 mr-2"></i> Metodología
+                </h2>
+                <ol class="list-decimal pl-5 mb-4">
+                    <li>Resolución de ecuaciones exponencial y logística mediante transformada de Laplace.</li>
+                    <li>Comparación de soluciones obtenidas con separación de variables.</li>
+                    <li>Análisis y visualización de proyecciones para 2025.</li>
+                </ol>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-trophy text-blue-500 mr-2"></i> Resultados principales y conclusiones
+                </h2>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>Ambos métodos arrojaron resultados equivalentes matemáticamente.</li>
+                    <li>Las estimaciones logísticas para 2025 oscilaron entre <strong>3,271,045</strong> y <strong>3,286,886</strong> habitantes; el modelo exponencial estimó <strong>3,351,652</strong>.</li>
+                    <li>El valor de K es crítico y debe estimarse con técnicas precisas para planificaciones urbanas de largo plazo.</li>
+                    <li>El modelo logístico es preferible para proyecciones realistas en contextos urbanos.</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-square-root-alt text-blue-500 mr-2"></i> Transformada de Laplace: Definición y aplicación
+                </h2>
+                <p class="mb-4">
+                    La Transformada de Laplace es una técnica matemática que permite convertir ecuaciones diferenciales en ecuaciones algebraicas,
+                    simplificando su resolución. Transforma una función del dominio del tiempo \(f(t)\) a una función del dominio de la frecuencia compleja \(F(s)\).
+                </p>
+                <p class="mb-4">
+                    <strong>Definición formal:</strong> La transformada de Laplace de una función \(f(t)\) se define como:
+                </p>
+                <div class="mb-4 text-center">
+
+                    \[\mathcal{L}\{f(t)\} = F(s) = \int_{0}^{\infty} e^{-st} f(t) \, dt\]
+                </div>
+                <p class="mb-4">
+                    <strong>Variables y parámetros:</strong>
+                </p>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>\(f(t)\): Función en el dominio del tiempo.</li>
+                    <li>\(F(s)\): Transformada de Laplace (función en el dominio de la frecuencia).</li>
+                    <li>\(s\): Variable compleja en el dominio de la frecuencia.</li>
+                    <li>\(t\): Variable real en el dominio del tiempo.</li>
+                </ul>
+                <p class="mb-4">
+                    <strong>Aplicación a ecuaciones diferenciales:</strong>
+                </p>
+                <div class="mb-4">
+
+                    \[\mathcal{L}\left\{\frac{dP}{dt}\right\} = r\,\mathcal{L}\{P\}\]
+
+                    \[\mathcal{L}\left\{\frac{dP}{dt}\right\} = r\,\mathcal{L}\left\{P\left(1-\frac{P}{K}\right)\right\}\]
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-calculator text-blue-500 mr-2"></i> Simulador con transformada de Laplace
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                    <div>
+                        <label for="lap-p0" class="block text-sm font-medium text-gray-700">Población inicial P₀</label>
+                        <input type="number" id="lap-p0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="3240000">
+                        <div id="error-lap-p0" class="error-message">Error: Solo se admiten datos hasta 150000000</div>
+                    </div>
+                    <div>
+                        <label for="lap-r" class="block text-sm font-medium text-gray-700">Tasa de crecimiento r (% anual)</label>
+                        <input type="number" id="lap-r" step="0.001" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="0.484">
+                        <div id="error-lap-r" class="error-message">Error: solo se aceptan valores menores a 120</div>
+                    </div>
+                    <div>
+                        <label for="lap-k" class="block text-sm font-medium text-gray-700">Capacidad de soporte K</label>
+                        <input type="number" id="lap-k" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="3280000">
+                        <div id="error-lap-k" class="error-message">Error: el límite es 50,000,000</div>
+                    </div>
+                    <div>
+                        <label for="lap-year" class="block text-sm font-medium text-gray-700">Año de proyección</label>
+                        <input type="number" id="lap-year" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" value="2025">
+                        <div id="error-lap-year" class="error-message">Error: el máximo es 2030</div>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="lap-calculate" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+                            Calcular proyección
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-4 bg-blue-50 rounded-lg text-center">
+                    <span class="font-semibold text-lg">Proyección en el año <span id="lap-proj-year">2025</span>:</span>
+                    <span id="lap-result" class="text-xl font-bold text-blue-700 ml-2">3,279,118 hab.</span>
+                </div>
+
+                <div class="chart-container mt-6">
+                    <canvas id="lapChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">
+                    <i class="fas fa-chart-line text-blue-500 mr-2"></i> Comparativa de modelos y métodos
+                </h2>
+                <p>
+                    Universidad San Buenaventura, 2025 — Autores: S.E. Acosta Osorio, B.J. Zambrano, A.C. Carillo.<br>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FontAwesome -->
+    <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/js/all.min.js"></script>
+
+    <script>
+        // Función para cambiar entre pestañas
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabButtons = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("tab-active");
+            }
+
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("tab-active");
+        }
+
+        // Validaciones para los inputs
+        function validateInput(inputId, errorId, min, max) {
+            const input = document.getElementById(inputId);
+            const errorElement = document.getElementById(errorId);
+            const value = parseFloat(input.value);
+
+            if (isNaN(value) || value < min || value > max) { // Added isNaN check for robustness
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                errorElement.style.display = 'none';
+                return true;
+            }
+        }
+
+        // Formateo de números
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // SIMULADOR EXPONENCIAL
+        let expChart = null;
+
+        document.getElementById('exp-calculate').addEventListener('click', function() {
+            // Validación de inputs
+            const validP0 = validateInput('exp-p0', 'error-exp-p0', 1, 150000000); 
+            const validR = validateInput('exp-r', 'error-exp-r', 0, 120);
+            const validYear = validateInput('exp-year', 'error-exp-year', 2017, 2030);
+
+            if (!validP0 || !validR || !validYear) return;
+
+            // Obtener valores
+            const p0 = parseFloat(document.getElementById('exp-p0').value);
+            const r = parseFloat(document.getElementById('exp-r').value) / 100; // Convertir a decimal
+            const targetYear = parseInt(document.getElementById('exp-year').value);
+            const baseYear = 2017; 
+            const t = targetYear - baseYear;
+
+
+            // Calcular proyección
+            const projection = p0 * Math.exp(r * t);
+            document.getElementById('exp-proj-year').textContent = targetYear;
+            document.getElementById('exp-result').textContent = formatNumber(Math.round(projection)) + " hab.";
+
+            // Crear datos para el gráfico
+            const years = [];
+            const population = [];
+            const dataStartYear = 2017; 
+            const dataEndYear = 2030;  
+
+            for (let year = dataStartYear; year <= dataEndYear; year++) {
+                const timeOffset = year - baseYear; 
+                years.push(year);
+                population.push(p0 * Math.exp(r * timeOffset));
+            }
+
+            // Actualizar o crear el gráfico
+            if (expChart) {
+                expChart.destroy();
+            }
+
+            const ctx = document.getElementById('expChart').getContext('2d');
+            expChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Población proyectada',
+                        data: population,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Año (t)' // MODIFICADO AQUÍ
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Población (millones)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return (value / 1000000).toFixed(1);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Población: ${formatNumber(Math.round(context.parsed.y))} hab.`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // SIMULADOR LOGÍSTICO
+        let logChart = null;
+
+        document.getElementById('log-calculate').addEventListener('click', function() {
+            // Validación de inputs
+            const validP0 = validateInput('log-p0', 'error-log-p0', 1, 150000000); 
+            const validR = validateInput('log-r', 'error-log-r', 0, 120);
+            const validK = validateInput('log-k', 'error-log-k', 1, 50000000); 
+            const validYear = validateInput('log-year', 'error-log-year', 2017, 2030);
+
+            const p0_val = parseFloat(document.getElementById('log-p0').value);
+            const k_val = parseFloat(document.getElementById('log-k').value);
+
+            let kErrorElement = document.getElementById('error-log-k');
+            let kIsValidCustom = true;
+            if (k_val <= p0_val) {
+                kErrorElement.textContent = "Error: K debe ser mayor que P₀.";
+                kErrorElement.style.display = 'block';
+                kIsValidCustom = false;
+            } else if (k_val > 50000000) { 
+                 kErrorElement.textContent = "Error: el límite es 50,000,000"; 
+                 kErrorElement.style.display = 'block';
+                 kIsValidCustom = false;
+            } else {
+                 kErrorElement.style.display = 'none'; 
+            }
+
+
+            if (!validP0 || !validR || !validK || !validYear || !kIsValidCustom) return;
+
+            // Obtener valores
+            const p0 = parseFloat(document.getElementById('log-p0').value);
+            const r = parseFloat(document.getElementById('log-r').value) / 100; 
+            const k = parseFloat(document.getElementById('log-k').value);
+            const targetYear = parseInt(document.getElementById('log-year').value);
+            const baseYear = 2017; 
+            const t = targetYear - baseYear;
+
+
+            // Calcular A para la ecuación logística
+            const A = (k - p0) / p0;
+            if (p0 === 0 || p0 >= k) { 
+                 document.getElementById('log-result').textContent = "Datos inválidos para K y P₀";
+                 if (logChart) logChart.destroy(); 
+                 return;
+            }
+
+            // Calcular proyección
+            const projection = k / (1 + A * Math.exp(-r * t));
+            document.getElementById('log-proj-year').textContent = targetYear;
+            document.getElementById('log-result').textContent = formatNumber(Math.round(projection)) + " hab.";
+
+            // Crear datos para el gráfico
+            const years = [];
+            const population = [];
+            const capacityLine = [];
+            const dataStartYear = 2017;
+            const dataEndYear = 2030;
+
+            for (let year = dataStartYear; year <= dataEndYear; year++) {
+                const timeOffset = year - baseYear;
+                years.push(year);
+                population.push(k / (1 + A * Math.exp(-r * timeOffset)));
+                capacityLine.push(k);
+            }
+
+            // Actualizar o crear el gráfico
+            if (logChart) {
+                logChart.destroy();
+            }
+
+            const ctx = document.getElementById('logChart').getContext('2d');
+            logChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Población proyectada',
+                        data: population,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.1,
+                        fill: true
+                    }, {
+                        label: 'Capacidad de soporte (K)',
+                        data: capacityLine,
+                        borderColor: 'rgba(220, 53, 69, 0.8)',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Año (t)' // MODIFICADO AQUÍ
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Población (millones)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return (value / 1000000).toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.dataset.label === 'Población proyectada') {
+                                        return `Población: ${formatNumber(Math.round(context.parsed.y))} hab.`;
+                                    } else {
+                                        return `Capacidad de soporte: ${formatNumber(Math.round(context.parsed.y))} hab.`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // SIMULADOR LAPLACE
+        let lapChart = null;
+
+        document.getElementById('lap-calculate').addEventListener('click', function() {
+            // Validación de inputs
+            const validP0 = validateInput('lap-p0', 'error-lap-p0', 1, 150000000); 
+            const validR = validateInput('lap-r', 'error-lap-r', 0, 120);
+            const validK = validateInput('lap-k', 'error-lap-k', 1, 50000000); 
+            const validYear = validateInput('lap-year', 'error-lap-year', 2017, 2030);
+
+            const p0_val_lap = parseFloat(document.getElementById('lap-p0').value);
+            const k_val_lap = parseFloat(document.getElementById('lap-k').value);
+
+            let kErrorElementLap = document.getElementById('error-lap-k');
+            let kIsValidCustomLap = true;
+            if (k_val_lap <= p0_val_lap) {
+                kErrorElementLap.textContent = "Error: K debe ser mayor que P₀.";
+                kErrorElementLap.style.display = 'block';
+                kIsValidCustomLap = false;
+            } else if (k_val_lap > 50000000) {
+                 kErrorElementLap.textContent = "Error: el límite es 50,000,000";
+                 kErrorElementLap.style.display = 'block';
+                 kIsValidCustomLap = false;
+            } else {
+                 kErrorElementLap.style.display = 'none';
+            }
+
+            if (!validP0 || !validR || !validK || !validYear || !kIsValidCustomLap) return;
+
+            // Obtener valores
+            const p0 = parseFloat(document.getElementById('lap-p0').value);
+            const r = parseFloat(document.getElementById('lap-r').value) / 100; 
+            const k = parseFloat(document.getElementById('lap-k').value);
+            const targetYear = parseInt(document.getElementById('lap-year').value);
+            const baseYear = 2017; 
+            const t = targetYear - baseYear;
+
+
+            // Calcular A para la ecuación logística
+            const A = (k - p0) / p0;
+            if (p0 === 0 || p0 >=k) {
+                 document.getElementById('lap-result').textContent = "Datos inválidos para K y P₀";
+                 if (lapChart) lapChart.destroy();
+                 return;
+            }
+
+            // Calcular proyección (misma fórmula que logística ya que la transformada de Laplace da el mismo resultado)
+            const projection = k / (1 + A * Math.exp(-r * t));
+            document.getElementById('lap-proj-year').textContent = targetYear;
+            document.getElementById('lap-result').textContent = formatNumber(Math.round(projection)) + " hab.";
+
+            // Crear datos para el gráfico
+            const years = [];
+            const logisticPopulation = [];
+            const exponentialPopulation = [];
+            const capacityLine = [];
+            const dataStartYear = 2017;
+            const dataEndYear = 2030;
+
+            for (let year = dataStartYear; year <= dataEndYear; year++) {
+                const timeOffset = year - baseYear;
+                years.push(year);
+
+                // Modelo logístico
+                logisticPopulation.push(k / (1 + A * Math.exp(-r * timeOffset)));
+
+                // Modelo exponencial (para comparación)
+                exponentialPopulation.push(p0 * Math.exp(r * timeOffset));
+
+                // Línea de capacidad
+                capacityLine.push(k);
+            }
+
+            // Actualizar o crear el gráfico
+            if (lapChart) {
+                lapChart.destroy();
+            }
+
+            const ctx = document.getElementById('lapChart').getContext('2d');
+            lapChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Modelo logístico',
+                        data: logisticPopulation,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.1,
+                        fill: true
+                    }, {
+                        label: 'Modelo exponencial',
+                        data: exponentialPopulation,
+                        borderColor: 'rgba(75, 192, 192, 0.8)',
+                        borderDash: [3, 3],
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.1,
+                        fill: false
+                    }, {
+                        label: 'Capacidad de soporte (K)',
+                        data: capacityLine,
+                        borderColor: 'rgba(220, 53, 69, 0.8)',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Año (t)' // MODIFICADO AQUÍ
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Población (millones)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return (value / 1000000).toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${formatNumber(Math.round(context.parsed.y))} hab.`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // Inicializar los gráficos al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstTabButton = document.querySelector('.tab-btn');
+             if (firstTabButton && !firstTabButton.classList.contains('tab-active')) {
+             }
+
+            document.getElementById('exp-calculate').click();
+            document.getElementById('log-calculate').click();
+            document.getElementById('lap-calculate').click();
+        });
+    </script>
+</body>
+</html>
